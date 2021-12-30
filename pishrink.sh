@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="v0.1.2"
+version="v0.2.1"
 
 CURRENT_DIR="$(pwd)"
 SCRIPTNAME="${0##*/}"
