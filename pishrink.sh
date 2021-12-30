@@ -87,6 +87,13 @@ function set_autoexpand() {
     #####Do not touch the following lines#####
 cat <<\EOF1 > "$mountdir/etc/rc.local"
 #!/bin/bash
+setup_ics_device() {
+  if [[ -f "/boot/ics/config.prod.json" ]]; then
+    deviceId=python3 -c "with open('/boot/ics/config.prod.json') as f: import json; j=json.load(f)['ics'];print(f\"{j['deviceType']}{j['deviceID']}\")"
+    sed -i "s/ics-device/$deviceId/g" /etc/hosts
+    sed -i "s/ics-device/$deviceId/g" /etc/hostname
+  fi
+}
 do_expand_rootfs() {
   ROOT_PART=$(mount | sed -n 's|^/dev/\(.*\) on / .*|\1|p')
 
@@ -134,6 +141,10 @@ else
   exit
 fi
 }
+echo "configuring ics-device"
+setup_ics_device
+sleep 5
+echo "Attempting expand via raspi_config"
 raspi_config_expand
 echo "WARNING: Using backup expand..."
 sleep 5
