@@ -96,8 +96,7 @@ setup_ics_device() {
       return
     fi
     echo "Device Id: $deviceId"
-    sudo sed -i "s/ics-device/$deviceId/g" /etc/hosts
-    sudo sed -i "s/ics-device/$deviceId/g" /etc/hostname
+    sudo sed -i "s/ics-device/$deviceId/g" /etc/hosts /etc/hostname
   fi
 }
 do_expand_rootfs() {
