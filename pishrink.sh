@@ -89,9 +89,15 @@ cat <<\EOF1 > "$mountdir/etc/rc.local"
 #!/bin/bash
 setup_ics_device() {
   if [[ -f "/boot/ics/config.prod.json" ]]; then
-    deviceId=python3 -c "with open('/boot/ics/config.prod.json') as f: import json; j=json.load(f)['ics'];print(f\"{j['deviceType']}{j['deviceID']}\")"
-    sed -i "s/ics-device/$deviceId/g" /etc/hosts
-    sed -i "s/ics-device/$deviceId/g" /etc/hostname
+    deviceId=$(python3 -c "with open('/boot/ics/config.prod.json') as f: import json; j=json.load(f)['ics'];print(f\"{j['deviceType']}{j['deviceID']}\")")
+    ret=$?
+    if [[ $ret != 0 ]]; then
+      echo "Gathering kart name failed with code: '$ret'. Skipping ics-device rename."
+      return
+    fi
+    echo "Device Id: $deviceId"
+    sudo sed -i "s/ics-device/$deviceId/g" /etc/hosts
+    sudo sed -i "s/ics-device/$deviceId/g" /etc/hostname
   fi
 }
 do_expand_rootfs() {
